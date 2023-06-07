@@ -57,7 +57,7 @@ describe('Basic user flow for Website', () => {
     // Once you have the innerText property, use innerText.jsonValue() to get the text value of it
     const button = await page.$('product-item >>> button');
     await button.click();
-    const buttonText = await button.innerText();
+    const buttonText = await button.innerText.jsonValue();
     expect(buttonText).toBe('Remove from Cart');
   }, 2500);
 
@@ -72,8 +72,11 @@ describe('Basic user flow for Website', () => {
     const prodItems = await page.$$('product-item');
 
     for (let i = 0; i < prodItems.length; i++) {
-      const button = await prodItems[i].shadow$('button');
-      await button.click();
+      await page.evaluate((item) => {
+        let shadow = item.shadowRoot;
+        let button = shadow.querySelector('button');
+        button.click();
+      }, prodItems[i]);
     }
 
     const cartCount = await page.$eval('#cart-count', (element) => {
