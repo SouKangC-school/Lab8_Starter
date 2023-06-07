@@ -52,12 +52,13 @@ describe('Basic user flow for Website', () => {
     console.log('Checking the "Add to Cart" button...');
     // TODO - Step 2
     // Query a <product-item> element using puppeteer ( checkout page.$() and page.$$() in the docs )
-    // Grab the shadowRoot of that element (it's a property), then query a b  utton from that shadowRoot.
+    // Grab the shadowRoot of that element (it's a property), then query a button from that shadowRoot.
     // Once you have the button, you can click it and check the innerText property of the button.
     // Once you have the innerText property, use innerText.jsonValue() to get the text value of it
-    const button = await page.$('product-item >>> button');
+    const item = await page.$('product-item');
+    let button = item.shadowRoot.querySelector('button');
     await button.click();
-    const buttonText = await button.innerText.jsonValue();
+    let buttonText = await button.innerText.jsonValue();
     expect(buttonText).toBe('Remove from Cart');
   }, 2500);
 
@@ -96,9 +97,7 @@ describe('Basic user flow for Website', () => {
     const prodItems = await page.$$('product-item');
 
     for (let i = 0; i < prodItems.length; i++) {
-      const buttonText = await prodItems[i].shadowEval((element) => {
-        return element.shadowRoot.querySelector('button').innerText;
-      });
+      const buttonText = await prodItems[i].shadowRoot.querySelector('button').innerText;
       expect(buttonText).toBe('Remove from Cart');
     }
 
@@ -130,7 +129,7 @@ describe('Basic user flow for Website', () => {
     const prodItems = await page.$$('product-item');
 
     for (let i = 0; i < prodItems.length; i++) {
-      const button = await prodItems[i].shadow$('button');
+      const button = await prodItems[i].shadowRoot.querySelector('button');
       await button.click();
     }
 
@@ -152,9 +151,7 @@ describe('Basic user flow for Website', () => {
     const prodItems = await page.$$('product-item');
 
     for (let i = 0; i < prodItems.length; i++) {
-      const buttonText = await prodItems[i].shadowEval((element) => {
-        return element.shadowRoot.querySelector('button').innerText;
-      });
+      const buttonText = await prodItems[i].shadowRoot.querySelector('button').innerText;
       expect(buttonText).toBe('Add to Cart');
     }
 
